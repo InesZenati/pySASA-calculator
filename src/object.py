@@ -14,8 +14,7 @@ class Residues:
         self.name = name
         self.number = number
         self.atomlist = []
-        
-    
+
 
 class Sphere:
     "Class to build the sphere component"
@@ -97,11 +96,14 @@ class Atom:
         
     def translate_points_on_atom(self):
         """We translate the sphere point on the atom."""
+        points_on_atom = []
         for sphere_point in self.sphere.pointlits:
             # For each point we add the atom coordinate 
-            sphere_point[0] += self.x
-            sphere_point[1] += self.y
-            sphere_point[2] += self.z
+            x_point_on_atom = sphere_point[0] + self.x
+            y_point_on_atom = sphere_point[1] + self.y
+            z_point_on_atom = sphere_point[2] + self.z
+            points_on_atom.append((x_point_on_atom, y_point_on_atom, z_point_on_atom)) 
+        self.sphere.pointlits = points_on_atom
                   
 
     def compute_distance_from_point_to_atom(self, point, atom):
@@ -117,7 +119,7 @@ class Atom:
         """Find if an atom is occluded or not by another atom."""
         # We assume that if a point is closer to an atom center than its own point then 
         # the point of our atom is occluded
-        distance = self.calculate_point_distance_to_atom(point, atom)
+        distance = self.compute_distance_from_point_to_atom(point, atom)
         if distance < atom.sphere.radius:
             return True
         return False
@@ -125,8 +127,8 @@ class Atom:
     def count_occluded_points(self, atom):    
         """Calculate the number of occluded points on the sphere by another atom."""
         occluded_points = 0
-        for point in (self.sphere.nbpoints):
-            if self.is_point_occluded(point, atom):
+        for point in (self.sphere.pointlist):
+            if self.is_occluded_atom(point, atom):
                 logger.success(f"Point {point} is occluded by {atom.type}")
                 occluded_points +=1
         return occluded_points
