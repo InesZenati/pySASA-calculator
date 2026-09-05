@@ -24,6 +24,7 @@ class Sphere:
         self.radius = radius + self.water_vdw
         self.nbpoints = nbpoints
         self.pointlits = []
+        self.compute_points_coordinate()
         
     def compute_points_coordinate(self):
         """Compute the point coordinate on the sphere surface."""
