@@ -6,7 +6,7 @@ from object import Protein, Residues, Atom, Sphere
 
 def load_radius_json(radius_json_file):
     with open(radius_json_file) as file:
-        atom_radius_value_by_residue = json.loads(file)
+        atom_radius_value_by_residue = json.load(file)
     return atom_radius_value_by_residue["aminoacids_atom_radius"]
     
 def get_atom_radius_based_on_residue(atom_radius_value_by_residue, residue, atomname):
