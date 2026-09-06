@@ -7,6 +7,13 @@ class Protein:
     def __init__(self, pdbname):
         self.pdbname = pdbname
         self.residuelist = []
+    
+    def get_all_atom(self):
+        all_atoms = []
+        for residue in self.residuelist:
+            for atom in residue.atomlist:
+                all_atoms.append(atom)
+        return all_atoms              
 
 class Residues:
     "Class to build the residue component"
@@ -23,7 +30,7 @@ class Sphere:
     def __init__(self, radius, nbpoints = 400):
         self.radius = radius + self.water_vdw
         self.nbpoints = nbpoints
-        self.pointlits = []
+        self.pointlist = []
         self.occluded_points = []
         self.compute_points_coordinate()
         
@@ -31,59 +38,59 @@ class Sphere:
         """Compute the point coordinate on the sphere surface."""
         # We define the first angle
         first_heigth = -1
-        logger.info(f"Point n° 1 | heigth: {first_heigth}")
+        logger.debug(f"Point n° 1 | heigth: {first_heigth}")
         first_teta_angle = math.pi
-        logger.info(f"Point n° 1 | heigth: {first_teta_angle}")
+        logger.debug(f"Point n° 1 | heigth: {first_teta_angle}")
         first_phi_angle = 0
-        logger.info(f"Point n° 1 | heigth: {first_phi_angle}")
+        logger.debug(f"Point n° 1 | heigth: {first_phi_angle}")
         
         # We compute the coordinate of the first point 
         x_point = self.radius *  math.sin(first_teta_angle) * math.cos(first_phi_angle)
         y_point = self.radius *  math.sin(first_teta_angle) * math.sin(first_phi_angle)
         z_point = self.radius *  math.cos(first_teta_angle) 
 
-        self.pointlits.append((x_point, y_point, z_point))
-        logger.info(f"Added point n° 1 | coordinates : {(x_point, y_point, z_point)}")
+        self.pointlist.append((x_point, y_point, z_point))
+        logger.debug(f"Added point n° 1 | coordinates : {(x_point, y_point, z_point)}")
         
         previous_phi_angle = first_phi_angle
         # We treat the other points
         for k in range(2, self.nbpoints):
-            logger.info(f"Working on the point n° {k}")
+            logger.debug(f"Working on the point n° {k}")
             # First we compute the heigth of the sub spheres
             curent_heigth = -1 + 2 * (k - 1)/(self.nbpoints - 1)
-            logger.info(f"Point n° {k} | heigth: {curent_heigth}")
+            logger.debug(f"Point n° {k} | heigth: {curent_heigth}")
             # Second the compute the teta metric
             current_teta_angle = math.acos(curent_heigth)
-            logger.info(f"Point n° {k} | téta angle : {current_teta_angle}")
+            logger.debug(f"Point n° {k} | téta angle : {current_teta_angle}")
             # Then we calculate the rotation of the angle
             current_phi_angle = (previous_phi_angle + 3.6 / math.sqrt(self.nbpoints) * 
                                  1 / math.sqrt(1-curent_heigth**2)) % (2*math.pi)
             previous_phi_angle = current_phi_angle
-            logger.info(f"Point n° {k} | phi angle : {current_phi_angle}")
+            logger.debug(f"Point n° {k} | phi angle : {current_phi_angle}")
             
             x_point = self.radius *  math.sin(current_teta_angle) * math.cos(current_phi_angle)
             y_point = self.radius *  math.sin(current_teta_angle) * math.sin(current_phi_angle)
             z_point = self.radius *  math.cos(current_teta_angle) 
         
-            self.pointlits.append((x_point, y_point, z_point))
-            logger.info(f"Added point n° {k} | coordinates : {(x_point, y_point, z_point)}")
+            self.pointlist.append((x_point, y_point, z_point))
+            logger.debug(f"Added point n° {k} | coordinates : {(x_point, y_point, z_point)}")
             
         # We take care of the last point
         last_heigth = -1 + 2 * (self.nbpoints - 1) / (self.nbpoints - 1)
-        logger.info(f"Point n° {self.nbpoints} | heigth: {last_heigth}")
+        logger.debug(f"Point n° {self.nbpoints} | heigth: {last_heigth}")
         last_teta_angle = math.acos(last_heigth)
-        logger.info(f"Point n° {self.nbpoints} | heigth: {last_teta_angle}")
+        logger.debug(f"Point n° {self.nbpoints} | heigth: {last_teta_angle}")
         last_phi_angle = 0
-        logger.info(f"Point n° {self.nbpoints} | heigth: {last_phi_angle}")
+        logger.debug(f"Point n° {self.nbpoints} | heigth: {last_phi_angle}")
         
         # We translate the sphere points on the atom
         x_point = self.radius *  math.sin(last_teta_angle) * math.cos(last_phi_angle)
         y_point = self.radius *  math.sin(last_teta_angle) * math.sin(last_phi_angle)
         z_point = self.radius *  math.cos(last_teta_angle) 
         
-        self.pointlits.append((x_point, y_point, z_point))
+        self.pointlist.append((x_point, y_point, z_point))
         
-        logger.info(f"Added point n° {self.nbpoints} | coordinates : {(x_point, y_point, z_point)}")
+        logger.debug(f"Added point n° {self.nbpoints} | coordinates : {(x_point, y_point, z_point)}")
         
 
 class Atom:
@@ -99,13 +106,13 @@ class Atom:
     def translate_points_on_atom(self):
         """We translate the sphere point on the atom."""
         points_on_atom = []
-        for sphere_point in self.sphere.pointlits:
+        for sphere_point in self.sphere.pointlist:
             # For each point we add the atom coordinate 
             x_point_on_atom = sphere_point[0] + self.x
             y_point_on_atom = sphere_point[1] + self.y
             z_point_on_atom = sphere_point[2] + self.z
             points_on_atom.append((x_point_on_atom, y_point_on_atom, z_point_on_atom)) 
-        self.sphere.pointlits = points_on_atom
+        self.sphere.pointlist = points_on_atom
                   
 
     def compute_distance_from_point_to_atom(self, point, atom):
@@ -113,7 +120,7 @@ class Atom:
         distance =  math.sqrt((atom.x - point[0])**2 
                    +(atom.y - point[1])**2
                    +(atom.z - point[2])**2)
-        logger.info(f"Distance found : {distance}")
+        logger.debug(f"Distance found : {distance}")
         return distance
         
         
@@ -129,22 +136,24 @@ class Atom:
     def count_occluded_points(self, atom):    
         """Calculate the number of occluded points on the sphere by another atom."""
         occluded_points = 0
-        for point in (self.sphere.pointlist):
+        for point in self.sphere.pointlist:
             if self.is_occluded_atom(point, atom):
-                logger.success(f"Point {point} is occluded by {atom.type}")
+                logger.debug(f"Point {point} is occluded by {atom.type}")
                 occluded_points +=1
         return occluded_points
     
     def detect_occluded_point(self, atomlist):
-        for point in self.pointlist:
-            for atom in atomlist :
+        for point in self.sphere.pointlist:
+            occluded = False
+
+            for atom in atomlist:
                 if self.is_occluded_atom(point, atom):
-                    logger.success(f"Point {point} is occluded by {atom.type}")
-                    self.sphere.occluded_points.append(True)
-                else : 
-                    self.sphere.occluded_points.append(False)
-    
-    
+                    occluded = True
+                    break
+
+            self.sphere.occluded_points.append(occluded)
+        
+        
                     
             
 
