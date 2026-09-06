@@ -214,6 +214,15 @@ wheels = [
 ]
 
 [[package]]
+name = "click"
+version = "8.5.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c7/0e/7fa0ef50764b67090eca4114772a2abf8b6148198475e54c660b97caeee6/click-8.5.0.tar.gz", hash = "sha256:ba0d2089de75ea0310e2dde03160e6ca10009947fb95a182f9b54021bb272e34", size = 382235, upload-time = "2026-08-26T13:33:14.56Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/58/50/6c0d534c5f134586a8e1ba4e330569e32f057e33372ae556463212fb4cd3/click-8.5.0-py3-none-any.whl", hash = "sha256:255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360", size = 125251, upload-time = "2026-08-26T13:33:12.928Z" },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -765,15 +774,21 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "bio" },
+    { name = "biopython" },
+    { name = "click" },
     { name = "loguru" },
     { name = "matplotlib" },
+    { name = "utc" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "bio", specifier = ">=1.8.3" },
+    { name = "biopython", specifier = ">=1.88" },
+    { name = "click", specifier = ">=8.5.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "matplotlib", specifier = ">=3.11.1" },
+    { name = "utc", specifier = ">=0.0.3" },
 ]
 
 [[package]]
@@ -850,6 +865,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/53/0c/06f8b233b8fd13b9e
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7f/3e/5db95bcf282c52709639744ca2a8b149baccf648e39c8cc87553df9eae0c/urllib3-2.7.0-py3-none-any.whl", hash = "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897", size = 131087, upload-time = "2026-05-07T16:13:17.151Z" },
 ]
+
+[[package]]
+name = "utc"
+version = "0.0.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/da/ce/694c9ec0f060611abaf13cfca477efbd5619d3cb5e6c6e4b58eafe1497d3/utc-0.0.3.tar.gz", hash = "sha256:7b842c4bb063b3882443010019734bbd8810291b8d738f7aadfc9ae89b5a1b7e", size = 1874, upload-time = "2015-02-06T05:49:31.185Z" }
 
 [[package]]
 name = "win32-setctime"
