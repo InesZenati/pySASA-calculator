@@ -24,6 +24,7 @@ class Sphere:
         self.radius = radius + self.water_vdw
         self.nbpoints = nbpoints
         self.pointlits = []
+        self.occluded_points = []
         self.compute_points_coordinate()
         
     def compute_points_coordinate(self):
@@ -133,7 +134,18 @@ class Atom:
                 logger.success(f"Point {point} is occluded by {atom.type}")
                 occluded_points +=1
         return occluded_points
-                
+    
+    def detect_occluded_point(self, atomlist):
+        for point in self.pointlist:
+            for atom in atomlist :
+                if self.is_occluded_atom(point, atom):
+                    logger.success(f"Point {point} is occluded by {atom.type}")
+                    self.sphere.occluded_points.append(True)
+                else : 
+                    self.sphere.occluded_points.append(False)
+    
+    
+                    
             
 
             
