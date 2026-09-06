@@ -209,12 +209,9 @@ __marimo__/
 
 # Data files
 *.tsv
-*.parquet
 *.csv
 *.png
 *.json
-*.owl
-*.html
 *.ipynb
 
 # Results folder
