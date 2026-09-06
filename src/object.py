@@ -3,12 +3,49 @@ from loguru import logger
 import math 
 
 class Protein:
-    "Class to build the protein composant"
+    """
+    Class used to represent a protein.
+    
+    Instance Attributes
+    -------------------
+    pdbname : str
+        The code of the protein extracted from the PDB database
+    residuelist : list
+        A list of Residues objects that make up the protein
+    
+    Methods
+    -------
+    get_all_atom(self)
+        Returns a list of all Atom objects in the protein by iterating 
+        through each Residues object in residuelist and collecting their atomlist.
+    """
     def __init__(self, pdbname):
+        """
+        Construct a protein.
+        
+        Parameters
+        ----------
+        pdbname : str
+            The code of the protein.
+        residuelist : list
+            A list of Residues objects that make up the protein.
+        """
         self.pdbname = pdbname
         self.residuelist = []
     
     def get_all_atom(self):
+        """
+        Create a list of all Atom objects in the protein.
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        list:
+            A list of all Atom objects in the protein.
+        """
         all_atoms = []
         for residue in self.residuelist:
             for atom in residue.atomlist:
@@ -16,18 +53,78 @@ class Protein:
         return all_atoms              
 
 class Residues:
-    "Class to build the residue component"
+    """
+    Class used to represent a residue.
+    
+    Instance Attributes
+    -------------------
+    name : str
+        The name of the residue.
+    number : int
+        The number of the residue.
+    atomlist : list
+        A list of Atom objects that make up the residue.
+    """
     def __init__(self, name, number):
+        """
+        Construct a residue.
+        
+        Parameters
+        ----------
+        name : str
+            The name of the residue.
+        number : int
+            The number of the residue.
+        atomlist : list
+            A list of Atom objects that make up the residue.
+        """
         self.name = name
         self.number = number
         self.atomlist = []
 
 
 class Sphere:
-    "Class to build the sphere component"
+    """
+    Class used to represent a sphere around an atom.
+    
+    Class Attributes
+    ----------------
+    water_vdw : float
+        The van der Waals radius of water in Angstroms.
+    
+    Instance Attributes
+    -------------------
+    radius : float
+        The radius of the sphere in Angstroms.
+    nbpoints : int
+        The number of points to be generated on the sphere surface.
+    pointlist : list
+        A list of tuples representing the coordinates of points on the sphere surface.
+    occluded_points : list
+        A boolean list indicating whether each point in pointlist is occluded or not.
+        
+    Methods
+    -------
+    compute_points_coordinate(self)
+        Computes the coordinates of points on the sphere surface using spherical coordinates.
+    """
     # We set for every atom the water radius to 1.4 Angstroms
     water_vdw = 1.4
-    def __init__(self, radius, nbpoints = 400):
+    def __init__(self, radius, nbpoints = 92):
+        """
+        Construct a sphere around an atom.
+        
+        Parameters
+        ----------
+        radius : float
+            The radius of the sphere in Angstroms.
+        nbpoints : int
+            The number of points to be generated on the sphere surface. Default is 92.
+        pointlist : list
+            A list of tuples representing the coordinates of points on the sphere surface.
+        occluded_points : list
+            A boolean list indicating whether each point in pointlist is occluded or not.
+        """
         self.radius = radius + self.water_vdw
         self.nbpoints = nbpoints
         self.pointlist = []
@@ -35,7 +132,15 @@ class Sphere:
         self.compute_points_coordinate()
         
     def compute_points_coordinate(self):
-        """Compute the point coordinate on the sphere surface."""
+        """
+        Compute the point coordinate on the sphere surface.
+        
+        Generates evenly distributed points on a sphere's surface using the Fibonacci 
+        sphere algorithm (golden angle spiral). For each point, it computes a height 
+        value, derives the polar angle (theta) and azimuthal angle (phi), then converts 
+        these spherical coordinates into (x, y, z) Cartesian coordinates centered at the origin.
+                
+        """
         # We define the first angle
         first_heigth = -1
         logger.debug(f"Point n° 1 | heigth: {first_heigth}")
@@ -94,8 +199,44 @@ class Sphere:
         
 
 class Atom:
-    "Class to build the atom component"
+    """
+    Class used to represent an atom.
+    
+    Instance attributes
+    -------------------
+    type : str
+        The type of the atom (e.g., 'C', 'O', 'N').
+    atomres : str
+        The residue name associated with the atom (e.g., 'ALA', 'GLY').
+    x : float
+        X position.
+    y : float
+        Y position.
+    z : float
+        Z position.
+    sphere : Sphere
+        An instance of the Sphere class representing the atom's surrounding sphere.
+    
+    Methods
+    -------
+    translate_points_on_atom(self)
+        Translates the points on the sphere to be centered on the atom's coordinates.
+    compute_distance_from_point_to_atom(self, point, atom)
+        Computes the Euclidean distance from a given point of our atom to the another
+        atom's position.
+    is_occluded_atom(self, atom)
+        Determines if the atom is occluded by another atom based on their positions and 
+        radiuss.
+    count_occluded_points(self, atom)
+        Counts the number of points on the atom's sphere that are occluded by another 
+        atom.
+    detect_occluded_point(self, atomlist)
+        Detects which points on the atom's sphere are occluded by a list of other atoms
+        and fill the occluded_pointlist attribute with the corresponding boolean 
+        (True / False).        
+    """
     def __init__(self, type, atomres, x, y , z, sphere):
+
         self.type = type
         self.atomres = atomres
         self.x = x
