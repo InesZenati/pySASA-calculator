@@ -65,7 +65,7 @@ class Residues:
     atomlist : list
         A list of Atom objects that make up the residue.
     """
-    def __init__(self, name, number):
+    def __init__(self, name, number, chain_id):
         """
         Construct a residue.
         
@@ -75,11 +75,14 @@ class Residues:
             The name of the residue.
         number : int
             The number of the residue.
+        chain_id : str
+            The chain identifier of the residue.
         atomlist : list
             A list of Atom objects that make up the residue.
         """
         self.name = name
         self.number = number
+        self.chain_id = chain_id
         self.atomlist = []
 
 
@@ -260,6 +263,7 @@ class Atom:
         self.y = y
         self.z = z
         self.sphere = sphere
+        self.translate_points_on_atom()
         
     def translate_points_on_atom(self):
         """
@@ -336,16 +340,20 @@ class Atom:
         free (False) otherwise. The result is stored point-by-point in 
         sphere.occluded_points, aligned by index with sphere.pointlits.
         """
+        self.sphere.occluded_points = []  # Réinitialise la liste pour éviter les doublons lors des réexécutions
+        
         for point in self.sphere.pointlist:
             occluded = False
-
             for atom in atomlist:
+                if atom is self:  # <-- Ignorer l'atome courant
+                    continue
+                    
                 if self.is_occluded_atom(point, atom):
                     occluded = True
                     break
 
             self.sphere.occluded_points.append(occluded)
-        
+            
         
                     
             
