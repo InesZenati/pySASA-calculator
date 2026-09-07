@@ -236,7 +236,24 @@ class Atom:
         (True / False).        
     """
     def __init__(self, type, atomres, x, y , z, sphere):
-
+        """
+        Constructor for the Atom class.
+        
+        Parameters
+        ----------
+        type : str
+            The type of the atom (e.g., 'C', 'O', 'N').
+        atomres : str
+            The residue name associated with the atom (e.g., 'ALA', 'GLY').
+        x : float
+            X position.
+        y : float
+            Y position.
+        z : float
+            Z position.
+        sphere : Sphere
+            An instance of the Sphere class representing the atom's surrounding sphere.
+        """
         self.type = type
         self.atomres = atomres
         self.x = x
@@ -245,7 +262,14 @@ class Atom:
         self.sphere = sphere
         
     def translate_points_on_atom(self):
-        """We translate the sphere point on the atom."""
+        """
+        Translates the points on the sphere to be centered on the atom's coordinates.
+        
+        Translates all sphere points from the origin to the atom's actual position 
+        in 3D space, by adding the atom's (x, y, z) coordinates to each point. This 
+        is called after the sphere's points have been computed, so that each 
+        atom ends up with a sphere correctly centered on its own coordinates.
+        """
         points_on_atom = []
         for sphere_point in self.sphere.pointlist:
             # For each point we add the atom coordinate 
@@ -257,7 +281,13 @@ class Atom:
                   
 
     def compute_distance_from_point_to_atom(self, point, atom):
-        """Compute the distance from a point to the atom center."""
+        """
+        Compute the distance from a point to the atom center.
+        
+        Computes the Euclidean distance between a 3D point (typically a sphere surface 
+        point) and the center of a given atom. Used to determine whether that point 
+        lies inside another atom's van der Waals sphere (i.e. whether it's occluded).
+        """
         distance =  math.sqrt((atom.x - point[0])**2 
                    +(atom.y - point[1])**2
                    +(atom.z - point[2])**2)
@@ -265,25 +295,47 @@ class Atom:
         return distance
         
         
-    def is_occluded_atom(self, point, atom):
-        """Find if an atom is occluded or not by another atom."""
+    def is_occluded_atom(self, point, otheratom):
+        """
+        Detect if an atom is occluded or not by another atom.
+        
+        Checks whether a single sphere point is occluded by a specific neighboring 
+        atom, by comparing the point-to-atom distance against that neighbor's sphere 
+        radius. Returns True if the point falls inside the neighbor's sphere (meaning 
+        it's buried), False otherwise.
+        """
         # We assume that if a point is closer to an atom center than its own point then 
         # the point of our atom is occluded
-        distance = self.compute_distance_from_point_to_atom(point, atom)
-        if distance < atom.sphere.radius:
+        distance = self.compute_distance_from_point_to_atom(point, otheratom)
+        if distance < otheratom.sphere.radius:
             return True
         return False
     
-    def count_occluded_points(self, atom):    
-        """Calculate the number of occluded points on the sphere by another atom."""
+    def count_occluded_points(self, otheratom):    
+        """
+        Calculate the number of occluded points on the current atom sphere by another 
+        atom. [WIP]
+        
+        Counts how many points on the atom's own sphere are occluded by a single given 
+        neighboring atom, by testing each point with is_occluded_atom. Meant to be 
+        called once per neighbor and summed.
+        """
         occluded_points = 0
         for point in self.sphere.pointlist:
-            if self.is_occluded_atom(point, atom):
-                logger.debug(f"Point {point} is occluded by {atom.type}")
+            if self.is_occluded_atom(point, otheratom):
+                logger.debug(f"Point {point} is occluded by {otheratom.type}")
                 occluded_points +=1
         return occluded_points
     
     def detect_occluded_point(self, atomlist):
+        """
+        Detect which points on the atom's sphere are occluded by a list of other atoms.
+        
+        Iterates over every point on the atom's own sphere and checks each one against 
+        all atoms in atomlist, marking it as occluded (True) if any of them covers it, 
+        free (False) otherwise. The result is stored point-by-point in 
+        sphere.occluded_points, aligned by index with sphere.pointlits.
+        """
         for point in self.sphere.pointlist:
             occluded = False
 
