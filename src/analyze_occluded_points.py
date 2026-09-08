@@ -27,7 +27,7 @@ def compute_atom_surface_infos(atom):
 
     atom_infos = {
         "number_of_points": number_of_points,
-        "number_of_occluded_atoms": number_of_occluded_atoms,
+        "number_of_occluded_points": number_of_occluded_atoms,
         "number_of_accessible": number_of_accessible,
         "total_surface": total_surface,
         "occluded_surface": occluded_surface,
