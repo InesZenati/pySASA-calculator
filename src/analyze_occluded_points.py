@@ -3,6 +3,7 @@ import math
 import os
 import sys
 import time
+import Path
 from datetime import UTC, datetime
 
 import click
@@ -66,24 +67,41 @@ def get_chain_ids(residuelist):
     return sorted(chain_ids)
 
 
+@click.command()
+@click.option("--pdb-name", 
+              type=click.Path(file_okay=True, path_type=Path),
+              help="Name of the protein (PDB id).")
+                          
+@click.option("--pdb-file", 
+              type=click.Path(file_okay=True, path_type=Path), 
+              help="Path to the PDB file.")
+@click.option("--radius-json",
+              type=click.Path(exists=True),
+              help="Path to the JSON file with van der Waals radius tables.")
+def analyze_protein_sasa(pdb_name, pdb_file, radius_json):
+    radius_table= load_radius_json(radius_json)
+    protein = parse_pdb(radius_table, pdb_name, pdb_file)
+
+    all_atoms = protein.get_all_atom()
+    logger.info(f"Total number of atoms: {len(all_atoms)}")
+
+    start_time = time.time()
+    for atom in tqdm(all_atoms, desc="Detecting occluded points"):
+        atom.detect_occluded_point(all_atoms)
+    elapsed_time = time.time() - start_time
+    logger.info(f"Occlusion detection took {elapsed_time:.2f} seconds")
+    
 if __name__ == "__main__":
-    radius_table = load_radius_json("data/radius.json")
-    protein = parse_pdb("data/1CRN.pdb", "1CRN", radius_table)
-    chain_ids = get_chain_ids(protein.residuelist)
-    print(f"chain id : {chain_ids}")
-
-    for residue in protein.residuelist:
-        res_surface = compute_residu_surface(residue)
-
-    for chain_id in chain_ids:
-        chain_surface = compute_chain_surface(protein.residuelist, chain_id)
-        print(
-            f"Chain {chain_id} total surface : {chain_surface.get('total_surface', 0)} A"
-        )
-
-    if protein.residuelist and protein.residuelist[0].atomlist:
-        first_atom = protein.residuelist[0].atomlist[0]
-        atom_surface = compute_atom_surface(first_atom)
-        print(
-            f"First atom total surface : {atom_surface['total_surface']} A"
-        )
+    timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+    os.makedirs("logs", exist_ok=True)
+    logger_format = (
+        "{time:YYYY-MM-DD HH:mm:ss} "
+        "| <level>{level:<8}</level> "
+        "| <level>{message}</level>"
+    )
+    logger.remove()
+    logger.add(sys.stdout, format=logger_format, level="INFO")
+    logger.add(f"logs/analyze_occlusion_{timestamp}.log", format=logger_format, 
+               level="INFO")
+    
+    analyze_protein_sasa()
