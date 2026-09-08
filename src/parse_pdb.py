@@ -1,12 +1,6 @@
 "Script to parse a PDB file and create the corresponding objects."
 import json
-import math
-import time
 
-from datetime import UTC, datetime
-from tqdm import tqdm
-import os
-import sys
 
 from Bio.PDB import PDBParser
 from loguru import logger
@@ -77,8 +71,7 @@ def get_atom_radius_based_on_residue(element_radius, carbon_radius,
     return None
 
 
-def parse_pdb(element_radius, backbone_carbon_radius, sidechain_carbon_radius_by_residue,
-              pdbname, filename):
+def parse_pdb(filename, pdbname, radius_json_file):
     """
     Parse the PDB file and create the corresponding objects
     
@@ -101,6 +94,10 @@ def parse_pdb(element_radius, backbone_carbon_radius, sidechain_carbon_radius_by
     Protein : 
         An instance of the Protein class containing the parsed structure.
     """
+    
+    element_radius = radius_json_file[0]
+    backbone_carbon_radius = radius_json_file[1]
+    sidechain_carbon_radius_by_residue = radius_json_file[2]
 
     parser = PDBParser()
     structure = parser.get_structure(pdbname, filename)
