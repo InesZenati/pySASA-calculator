@@ -12,6 +12,7 @@ from tqdm import tqdm
 from parse_pdb import load_radius_json, parse_pdb
 from write_surface_results import write_all_surface_results_in_tsv
 from find_neighboors import build_neighbor_search, get_atom_neighbors, get_max_cutoff
+
 @click.command()
 @click.option("--pdb-name", 
               type=str,
@@ -22,11 +23,14 @@ from find_neighboors import build_neighbor_search, get_atom_neighbors, get_max_c
 @click.option("--radius-json",
               type=click.Path(exists=True),
               help="Path to the JSON file with van der Waals radius tables.")
-def analyze_protein_sasa(pdb_name, pdb_file, radius_json):
+@click.option("--point_number",
+              type=int,
+              help="Number of point on the sphere")
+def analyze_protein_sasa(pdb_name, pdb_file, radius_json, point_number):
     radius_table = load_radius_json(radius_json)
     logger.info("Parsing PDB file ...")
     start_time = time.time()
-    protein = parse_pdb(pdb_file, pdb_name, radius_table)
+    protein = parse_pdb(pdb_file, pdb_name, radius_table, point_number)
     if protein:
         logger.success(f"Protein corresponding to {pdb_name} successfully"
                        "created")
