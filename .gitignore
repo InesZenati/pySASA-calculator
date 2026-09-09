@@ -213,6 +213,7 @@ __marimo__/
 *.png
 *.json
 *.ipynb
+*.pdb
 
 # Results folder
 !results
