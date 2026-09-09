@@ -65,10 +65,13 @@ def get_atom_radius_based_on_residue(element_radius, carbon_radius,
     elif residue in carbon_radius_by_residue:
             if atomname in carbon_radius_by_residue[residue]:
                 return carbon_radius_by_residue[residue][atomname]
+            else : 
+                logger. warning(f"Atom {atomname} in residue {residue}" 
+                                "not found in radius tables.")
     else : 
         logger. warning(f"Atom {atomname} in residue {residue}" 
                         "not found in radius tables.")
-    return None
+    return 0
 
 
 def parse_pdb(filename, pdbname, radius_json_file):
@@ -102,7 +105,7 @@ def parse_pdb(filename, pdbname, radius_json_file):
     parser = PDBParser()
     structure = parser.get_structure(pdbname, filename)
     
-    protein = Protein(pdbname=filename)
+    protein = Protein(pdbname=pdbname)
     # We work on the first structure that has been parsed
     model = structure[0] 
     
