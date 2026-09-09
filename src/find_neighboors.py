@@ -1,7 +1,8 @@
 """Script to find neighboring atoms with a manual double loop."""
 import math
+from numba import njit
 
-
+@njit
 def compute_atom_atom_distance(atom_one, atom_two):
     """
     Compute the Euclidean distance between the centers of two atoms.
@@ -44,7 +45,6 @@ def get_max_cutoff(all_atoms):
     """
     max_radius = max(atom.sphere.radius for atom in all_atoms)
     return 2 * max_radius
-
 
 def build_neighbor_lists(all_atoms, cutoff):
     
