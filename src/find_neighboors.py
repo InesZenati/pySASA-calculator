@@ -1,27 +1,22 @@
-"""Script to find neighboring atoms with a manual double loop."""
-import math
-from numba import njit
+"""Script to find neighboring atoms using Biopython's NeighborSearch."""
+from Bio.PDB import NeighborSearch
 
-@njit
-def compute_atom_atom_distance(atom_one, atom_two):
+
+def build_neighbor_search(all_atoms):
     """
-    Compute the Euclidean distance between the centers of two atoms.
+    Build a spatial search structure from a list of atoms.
 
     Parameters
     ----------
-    atom_one : Atom
-        The first atom.
-    atom_two : Atom
-        The second atom.
+    all_atoms : list
+        A list of all Atom objects in the protein.
 
     Return
     ------
-    float :
-        The distance between the two atom centers, in Angstroms.
+    NeighborSearch :
+        A NeighborSearch instance built from all_atoms.
     """
-    return math.sqrt((atom_one.x - atom_two.x) ** 2
-                      + (atom_one.y - atom_two.y) ** 2
-                      + (atom_one.z - atom_two.z) ** 2)
+    return NeighborSearch(all_atoms)
 
 
 def get_max_cutoff(all_atoms):
@@ -46,18 +41,29 @@ def get_max_cutoff(all_atoms):
     max_radius = max(atom.sphere.radius for atom in all_atoms)
     return 2 * max_radius
 
-def build_neighbor_lists(all_atoms, cutoff):
-    
-    neighbor_lists = {atom: [] for atom in all_atoms}
-    atom_count = len(all_atoms)
 
-    for i in range(atom_count):
-        atom_one = all_atoms[i]
-        for j in range(i + 1, atom_count):
-            atom_two = all_atoms[j]
-            atom_distance = compute_atom_atom_distance(atom_one, atom_two)
-            if atom_distance < cutoff:
-                neighbor_lists[atom_one].append(atom_two)
-                neighbor_lists[atom_two].append(atom_one)
+def get_atom_neighbors(atom, neighbor_search, cutoff):
+    """
+    Get the atoms within cutoff distance from an atom.
 
-    return neighbor_lists
+    Parameters
+    ----------
+    atom : Atom
+        The atom object around which to search neighbors.
+    neighbor_search : NeighborSearch
+        A NeighborSearch instance built from all the atoms of the protein.
+    cutoff : float
+        The maximum distance (in Angstroms) to consider an atom a neighbor.
+
+    Return
+    ------
+    list :
+        A list of Atom objects within cutoff distance from atom, excluding
+        the atom itself.
+    """
+    neighbor_atoms_list = []
+    neighbor_atoms = neighbor_search.search(atom.get_coord(), cutoff)
+    for neighbor_atom in neighbor_atoms:
+        if neighbor_atom is not atom:
+            neighbor_atoms_list.append(neighbor_atom)
+    return neighbor_atoms_list
