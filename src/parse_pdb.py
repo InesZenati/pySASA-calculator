@@ -1,6 +1,6 @@
 "Script to parse a PDB file and create the corresponding objects."
 import json
-
+from tqdm import tqdm
 
 from Bio.PDB import PDBParser
 from loguru import logger
@@ -111,7 +111,7 @@ def parse_pdb(filename, pdbname, radius_json_file):
     
     for chain in model:
         logger.debug(f"Working on chain {chain.id}")
-        for residue in chain:
+        for residue in tqdm(chain, desc=f"Processing chain {chain.id}", unit="residue"):
             logger.debug(f"Working on residue {residue.get_resname()}")
             logger.debug(f" Chain {chain.id} | Residue : {residue.get_resname()}")
             my_residue =  Residues(name=residue.get_resname(),number=residue.id[1],
@@ -119,20 +119,21 @@ def parse_pdb(filename, pdbname, radius_json_file):
             logger.debug(f"Chain {chain.id} | Residue : {residue.get_resname()}"
                             f"created")
             for atom in residue:
-                x, y, z = atom.get_coord()
-                radius = get_atom_radius_based_on_residue(element_radius,
-                                                          backbone_carbon_radius,
-                                                          sidechain_carbon_radius_by_residue,
-                                         residue.get_resname(), atom.get_name())
-                my_sphere = Sphere(radius=radius, nbpoints=92)
-                logger.debug(f"Chain {chain.id} | Residue : {residue.get_resname()} |" 
-                            f"Atom : {atom.get_name()} | Sphere created")
-                my_atom = Atom(type=atom.get_name(), atomres=my_residue, 
-                               x=float(x), y=float(y), z=float(z), sphere=my_sphere)
-                logger.debug(f"Chain {chain.id} | Residue : {residue.get_resname()} | "
-                            f"Atom : {atom.get_name()} | Radius : {radius}") 
-                
-                my_residue.atomlist.append(my_atom)
+                if not (atom.get_name().startswith("H")):
+                    x, y, z = atom.get_coord()
+                    radius = get_atom_radius_based_on_residue(element_radius,
+                                                            backbone_carbon_radius,
+                                                            sidechain_carbon_radius_by_residue,
+                                            residue.get_resname(), atom.get_name())
+                    my_sphere = Sphere(radius=radius, nbpoints=92)
+                    logger.debug(f"Chain {chain.id} | Residue : {residue.get_resname()} |" 
+                                f"Atom : {atom.get_name()} | Sphere created")
+                    my_atom = Atom(type=atom.get_name(), atomres=my_residue, 
+                                x=float(x), y=float(y), z=float(z), sphere=my_sphere)
+                    logger.debug(f"Chain {chain.id} | Residue : {residue.get_resname()} | "
+                                f"Atom : {atom.get_name()} | Radius : {radius}") 
+                    
+                    my_residue.atomlist.append(my_atom)
             protein.residuelist.append(my_residue)
 
     return protein
