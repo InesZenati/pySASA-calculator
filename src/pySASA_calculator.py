@@ -10,8 +10,8 @@ from loguru import logger
 from tqdm import tqdm
 
 from parse_pdb import load_radius_json, parse_pdb
-from write_surface_results import write_surface_results
-
+from write_surface_results import write_all_surface_results_in_tsv
+from find_neighboors import build_neighbor_search, get_atom_neighbors, get_max_cutoff
 @click.command()
 @click.option("--pdb-name", 
               type=str,
@@ -28,14 +28,17 @@ def analyze_protein_sasa(pdb_name, pdb_file, radius_json):
 
     all_atoms = protein.get_all_atom()
     logger.info(f"Total number of atoms: {len(all_atoms)}")
-
+    neighbor_lists = build_neighbor_search(all_atoms)
+    cutoff = get_max_cutoff(all_atoms)
+    
     start_time = time.time()
     for atom in tqdm(all_atoms, desc="Detecting occluded points"):
-        atom.detect_occluded_point(all_atoms)
+        neighbor_atoms = get_atom_neighbors(atom, neighbor_lists, cutoff)
+        atom.detect_occluded_point(neighbor_atoms)
     elapsed_time = time.time() - start_time
     logger.success(f"Occlusion detection took {elapsed_time:.2f} seconds")
 
-    write_surface_results(protein, "results")
+    write_all_surface_results_in_tsv(protein, "results")
     logger.success("Surface results written to results/")
     
 if __name__ == "__main__":
