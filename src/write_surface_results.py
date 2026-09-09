@@ -121,8 +121,9 @@ def get_protein_surface_rows(protein):
 def write_all_surface_results_in_tsv(protein, output_dir):
 
     surface_field_names = [
-        "number_of_points", "number_of_occluded_atoms", "number_of_accessible",
-        "total_surface", "occluded_surface", "accessible_surface",
+        "number_of_points", "occluded_points", "accessible_point",
+        "total_surface (A)", "occluded_surface (A)", "accessible_surface (A)", 
+        "relative_surface"
     ]
     os.makedirs(output_dir, exist_ok=True)
 
