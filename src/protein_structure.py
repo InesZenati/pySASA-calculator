@@ -115,7 +115,7 @@ class Sphere:
     """
     # We set for every atom the water radius to 1.4 Angstroms
     water_vdw = 1.4
-    def __init__(self, radius, nbpoints = 92):
+    def __init__(self, radius, nbpoints):
         """
         Construct a sphere around an atom.
         
@@ -124,7 +124,7 @@ class Sphere:
         radius : float
             The radius of the sphere in Angstroms.
         nbpoints : int
-            The number of points to be generated on the sphere surface. Default is 92.
+            The number of points to be generated on the sphere surface.
         pointlist : list
             A list of tuples representing the coordinates of points on the sphere 
             surface.

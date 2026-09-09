@@ -74,7 +74,7 @@ def get_atom_radius_based_on_residue(element_radius, carbon_radius,
     return 0
 
 
-def parse_pdb(filename, pdbname, radius_json_file):
+def parse_pdb(filename, pdbname, radius_json_file, nbpoint):
     """
     Parse the PDB file and create the corresponding objects
     
@@ -111,6 +111,7 @@ def parse_pdb(filename, pdbname, radius_json_file):
     
     for chain in model:
         logger.debug(f"Working on chain {chain.id}")
+        logger.info("-"*100)
         for residue in tqdm(chain, desc=f"Processing chain {chain.id}", unit="residue"):
             logger.debug(f"Working on residue {residue.get_resname()}")
             logger.debug(f" Chain {chain.id} | Residue : {residue.get_resname()}")
@@ -125,7 +126,7 @@ def parse_pdb(filename, pdbname, radius_json_file):
                                                             backbone_carbon_radius,
                                                             sidechain_carbon_radius_by_residue,
                                             residue.get_resname(), atom.get_name())
-                    my_sphere = Sphere(radius=radius, nbpoints=92)
+                    my_sphere = Sphere(radius=radius, nbpoints=nbpoint)
                     logger.debug(f"Chain {chain.id} | Residue : {residue.get_resname()}"
                                 f" | Atom : {atom.get_name()} | Sphere created")
                     my_atom = Atom(type=atom.get_name(), atomres=my_residue, 
