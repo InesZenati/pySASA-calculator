@@ -121,7 +121,7 @@ def get_protein_surface_rows(protein):
 def write_all_surface_results_in_tsv(protein, output_dir):
 
     surface_field_names = [
-        "number_of_points", "occluded_points", "point_accessible",
+        "number_of_points", "number_of_occluded_atoms", "number_of_accessible",
         "total_surface", "occluded_surface", "accessible_surface",
     ]
     os.makedirs(output_dir, exist_ok=True)
@@ -130,3 +130,19 @@ def write_all_surface_results_in_tsv(protein, output_dir):
         surface_field_names
     write_tsv(get_atom_surface_rows(protein), atom_field_names,
               os.path.join(output_dir, "atom_surface.tsv"))
+    residue_field_names = ["chain_id", "residue_name", "residue_number"] + \
+        surface_field_names
+    write_tsv(get_residue_surface_rows(protein), residue_field_names,
+              os.path.join(output_dir, "residue_surface.tsv"))
+
+    chain_field_names = ["chain_id"] + surface_field_names
+    write_tsv(get_chain_surface_rows(protein), chain_field_names,
+              os.path.join(output_dir, "chain_surface.tsv"))
+
+    protein_field_names = ["pdb_name"] + surface_field_names
+    write_tsv(get_protein_surface_rows(protein), protein_field_names,
+              os.path.join(output_dir, "protein_surface.tsv"))
+
+
+
+
