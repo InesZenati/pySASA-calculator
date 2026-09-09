@@ -24,14 +24,20 @@ from find_neighboors import build_neighbor_search, get_atom_neighbors, get_max_c
               help="Path to the JSON file with van der Waals radius tables.")
 def analyze_protein_sasa(pdb_name, pdb_file, radius_json):
     radius_table = load_radius_json(radius_json)
+    logger.info("Parsing PDB file ...")
+    start_time = time.time()
     protein = parse_pdb(pdb_file, pdb_name, radius_table)
+    if protein:
+        logger.success(f"Protein corresponding to {pdb_name} successfully"
+                       "created")
+    else :
+        logger.warning(f"The parsing of {pdb_file} failed")
 
     all_atoms = protein.get_all_atom()
     logger.info(f"Total number of atoms: {len(all_atoms)}")
     neighbor_lists = build_neighbor_search(all_atoms)
     cutoff = get_max_cutoff(all_atoms)
     
-    start_time = time.time()
     for atom in tqdm(all_atoms, desc="Detecting occluded points"):
         neighbor_atoms = get_atom_neighbors(atom, neighbor_lists, cutoff)
         atom.detect_occluded_point(neighbor_atoms)
