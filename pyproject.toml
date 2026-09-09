@@ -3,12 +3,13 @@ name = "pysasa-calculator"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "bio>=1.8.3",
     "biopython>=1.88",
     "click>=8.5.0",
     "loguru>=0.7.3",
     "matplotlib>=3.11.1",
+    "numba<0.63",
     "utc>=0.0.3",
 ]
