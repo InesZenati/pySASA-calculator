@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 from Bio.PDB import PDBParser
 from loguru import logger
-from object import Protein, Residues, Atom, Sphere
+from protein_structure import Protein, Residues, Atom, Sphere
 
 
 def load_radius_json(radius_json_file):
@@ -126,12 +126,12 @@ def parse_pdb(filename, pdbname, radius_json_file):
                                                             sidechain_carbon_radius_by_residue,
                                             residue.get_resname(), atom.get_name())
                     my_sphere = Sphere(radius=radius, nbpoints=92)
-                    logger.debug(f"Chain {chain.id} | Residue : {residue.get_resname()} |" 
-                                f"Atom : {atom.get_name()} | Sphere created")
+                    logger.debug(f"Chain {chain.id} | Residue : {residue.get_resname()}"
+                                f" | Atom : {atom.get_name()} | Sphere created")
                     my_atom = Atom(type=atom.get_name(), atomres=my_residue, 
                                 x=float(x), y=float(y), z=float(z), sphere=my_sphere)
-                    logger.debug(f"Chain {chain.id} | Residue : {residue.get_resname()} | "
-                                f"Atom : {atom.get_name()} | Radius : {radius}") 
+                    logger.debug(f"Chain {chain.id} | Residue : {residue.get_resname()}"
+                                f" | Atom : {atom.get_name()} | Radius : {radius}") 
                     
                     my_residue.atomlist.append(my_atom)
             protein.residuelist.append(my_residue)

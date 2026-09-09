@@ -110,7 +110,8 @@ class Sphere:
     Methods
     -------
     compute_points_coordinate(self)
-        Computes the coordinates of points on the sphere surface using spherical coordinates.
+        Computes the coordinates of points on the sphere surface using spherical 
+        coordinates.
     """
     # We set for every atom the water radius to 1.4 Angstroms
     water_vdw = 1.4
@@ -125,9 +126,11 @@ class Sphere:
         nbpoints : int
             The number of points to be generated on the sphere surface. Default is 92.
         pointlist : list
-            A list of tuples representing the coordinates of points on the sphere surface.
+            A list of tuples representing the coordinates of points on the sphere 
+            surface.
         occluded_points : list
-            A boolean list indicating whether each point in pointlist is occluded or not.
+            A boolean list indicating whether each point in pointlist is occluded 
+            or not.
         """
         self.radius = radius + self.water_vdw
         self.nbpoints = nbpoints
@@ -142,7 +145,8 @@ class Sphere:
         Generates evenly distributed points on a sphere's surface using the Fibonacci 
         sphere algorithm (golden angle spiral). For each point, it computes a height 
         value, derives the polar angle (theta) and azimuthal angle (phi), then converts 
-        these spherical coordinates into (x, y, z) Cartesian coordinates centered at the origin.
+        these spherical coordinates into (x, y, z) Cartesian coordinates centered at the
+        origin.
                 
         """
         # We define the first angle
@@ -177,12 +181,15 @@ class Sphere:
             previous_phi_angle = current_phi_angle
             logger.debug(f"Point n° {k} | phi angle : {current_phi_angle}")
             
-            x_point = self.radius *  math.sin(current_teta_angle) * math.cos(current_phi_angle)
-            y_point = self.radius *  math.sin(current_teta_angle) * math.sin(current_phi_angle)
+            x_point = self.radius *  math.sin(current_teta_angle) * \
+            math.cos(current_phi_angle)
+            y_point = self.radius *  math.sin(current_teta_angle) * \
+                math.sin(current_phi_angle)
             z_point = self.radius *  math.cos(current_teta_angle) 
         
             self.pointlist.append((x_point, y_point, z_point))
-            logger.debug(f"Added point n° {k} | coordinates : {(x_point, y_point, z_point)}")
+            logger.debug(f"Added point n° {k} | coordinates : "
+                         f"{(x_point, y_point, z_point)}")
             
         # We take care of the last point
         last_heigth = -1 + 2 * (self.nbpoints - 1) / (self.nbpoints - 1)
