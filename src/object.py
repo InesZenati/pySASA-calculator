@@ -198,7 +198,8 @@ class Sphere:
         
         self.pointlist.append((x_point, y_point, z_point))
         
-        logger.debug(f"Added point n° {self.nbpoints} | coordinates : {(x_point, y_point, z_point)}")
+        logger.debug(f"Added point n° {self.nbpoints} | "
+                     f"coordinates : {(x_point, y_point, z_point)}")
         
 
 class Atom:
@@ -208,9 +209,9 @@ class Atom:
     Instance attributes
     -------------------
     type : str
-        The type of the atom (e.g., 'C', 'O', 'N').
-    atomres : str
-        The residue name associated with the atom (e.g., 'ALA', 'GLY').
+        The type of the atom.
+    atomres : Residues
+        The residue object associated with the atom.
     x : float
         X position.
     y : float
@@ -246,7 +247,7 @@ class Atom:
         ----------
         type : str
             The type of the atom (e.g., 'C', 'O', 'N').
-        atomres : str
+        atomres : Residues
             The residue name associated with the atom (e.g., 'ALA', 'GLY').
         x : float
             X position.
@@ -295,7 +296,6 @@ class Atom:
         distance =  math.sqrt((atom.x - point[0])**2 
                    +(atom.y - point[1])**2
                    +(atom.z - point[2])**2)
-        logger.debug(f"Distance found : {distance}")
         return distance
         
         
@@ -327,7 +327,6 @@ class Atom:
         occluded_points = 0
         for point in self.sphere.pointlist:
             if self.is_occluded_atom(point, otheratom):
-                logger.debug(f"Point {point} is occluded by {otheratom.type}")
                 occluded_points +=1
         return occluded_points
     
@@ -340,12 +339,12 @@ class Atom:
         free (False) otherwise. The result is stored point-by-point in 
         sphere.occluded_points, aligned by index with sphere.pointlits.
         """
-        self.sphere.occluded_points = []  # Réinitialise la liste pour éviter les doublons lors des réexécutions
+        self.sphere.occluded_points = []  
         
         for point in self.sphere.pointlist:
             occluded = False
             for atom in atomlist:
-                if atom is self:  # <-- Ignorer l'atome courant
+                if atom is self: 
                     continue
                     
                 if self.is_occluded_atom(point, atom):
