@@ -1,4 +1,5 @@
 import csv
+import os
 from analyze_occluded_points import compute_atom_surface, compute_residu_surface\
                                     ,get_chain_ids, compute_chain_surface
 
@@ -116,3 +117,16 @@ def get_protein_surface_rows(protein):
     protein_row["pdb_name"] = protein.pdbname
     return [protein_row]
 
+
+def write_all_surface_results_in_tsv(protein, output_dir):
+
+    surface_field_names = [
+        "number_of_points", "occluded_points", "point_accessible",
+        "total_surface", "occluded_surface", "accessible_surface",
+    ]
+    os.makedirs(output_dir, exist_ok=True)
+
+    atom_field_names = ["chain_id", "residue_name", "residue_number", "atom_type"] + \
+        surface_field_names
+    write_tsv(get_atom_surface_rows(protein), atom_field_names,
+              os.path.join(output_dir, "atom_surface.tsv"))
