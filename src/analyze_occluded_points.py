@@ -1,8 +1,6 @@
 """Script to analyze solvent occlusion of a parsed protein structure."""
 import math
 
-
-
 def compute_atom_surface(atom_object):
     """
     Compute point counts and surface areas (total, occluded, accessible) of one atom.
@@ -10,12 +8,14 @@ def compute_atom_surface(atom_object):
     Parameters
     ----------
     atom_object : Atom
-        An instance of the Atom class containing information about the atom and its sphere.
+        An instance of the Atom class containing information about the atom and its 
+        sphere.
         
     Returns
     -------
     dict : 
-        A dictionary containing the number of points, number of occluded atoms, number of accessible atoms,
+        A dictionary containing the number of points, number of occluded atoms, number 
+        of accessible atoms,
     """
     atom_infos  = {}
     number_of_points = len(atom_object.sphere.pointlist)
@@ -28,11 +28,11 @@ def compute_atom_surface(atom_object):
 
     atom_infos = {
         "number_of_points": number_of_points,
-        "number_of_occluded_atoms": number_of_occluded_atoms,
-        "number_of_accessible": number_of_accessible,
-        "total_surface": total_surface,
-        "occluded_surface": occluded_surface,
-        "accessible_surface": accessible_surface,
+        "occluded_points": number_of_occluded_atoms,
+        "accessible_point": number_of_accessible,
+        "total_surface (A)": round(total_surface,2),
+        "occluded_surface (A)": round(occluded_surface,2),
+        "accessible_surface (A)": round(accessible_surface,2)
     }
     
     return atom_infos
@@ -44,12 +44,14 @@ def compute_residu_surface(residue_object):
     Parameters
     ----------
     residue_object : Residues
-        An instance of the Residues class containing information about the residue and its atoms.
+        An instance of the Residues class containing information about the residue and 
+        its atoms.
     
     Return
     -------
     dict : 
-        A dictionary containing the total number of points, number of occluded atoms, number of accessible atoms,
+        A dictionary containing the total number of points, number of occluded atoms, 
+        number of accessible atoms,
     """
     result = {}
     atom_list = residue_object.atomlist
@@ -67,7 +69,8 @@ def compute_chain_surface(protein, chain_id):
     Parameters
     ----------
     protein : Protein
-        An instance of the Protein class containing information about the protein and its residues.
+        An instance of the Protein class containing information about the protein and 
+        its residues.
     
     chain_id : str
         The identifier of the chain for which to compute the surface area.
@@ -75,7 +78,8 @@ def compute_chain_surface(protein, chain_id):
     Return
     ------
     dict :  
-        A dictionary containing the total number of points, number of occluded atoms, number of accessible atoms,
+        A dictionary containing the total number of points, number of occluded atoms, 
+        number of accessible atoms,
     """
 
     chain_atoms = []
@@ -101,7 +105,8 @@ def get_chain_ids(residuelist):
     Return
     ------
     set :
-        A sorted list of unique chain identifiers present in the provided list of residues.
+        A sorted list of unique chain identifiers present in the provided list of 
+        residues.
     """
     chain_ids = set()
     for residue in residuelist:
