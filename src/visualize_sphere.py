@@ -1,7 +1,7 @@
 """Script to visualize the sphere object created for each atom"""
 
 import matplotlib.pyplot as plt
-from object import Sphere
+from protein_structure import Sphere
 
 # First we instanciate the sphere object 
 atom_sphere = Sphere(3.2)
