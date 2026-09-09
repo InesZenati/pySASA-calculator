@@ -44,3 +44,20 @@ def get_max_cutoff(all_atoms):
     """
     max_radius = max(atom.sphere.radius for atom in all_atoms)
     return 2 * max_radius
+
+
+def build_neighbor_lists(all_atoms, cutoff):
+    
+    neighbor_lists = {atom: [] for atom in all_atoms}
+    atom_count = len(all_atoms)
+
+    for i in range(atom_count):
+        atom_one = all_atoms[i]
+        for j in range(i + 1, atom_count):
+            atom_two = all_atoms[j]
+            atom_distance = compute_atom_atom_distance(atom_one, atom_two)
+            if atom_distance < cutoff:
+                neighbor_lists[atom_one].append(atom_two)
+                neighbor_lists[atom_two].append(atom_one)
+
+    return neighbor_lists
