@@ -1,5 +1,6 @@
 """Script to build the composant of the protein"""
 from loguru import logger
+import numpy as np
 import math 
 
 class Protein:
@@ -352,6 +353,20 @@ class Atom:
                     break
 
             self.sphere.occluded_points.append(occluded)
+            
+    def get_coord(self):
+        """
+        Return the atom's coordinates as a numpy array.
+
+        Used so that Bio.PDB.NeighborSearch can work directly with our own
+        Atom objects, since it expects a get_coord method on each object.
+
+        Return
+        ------
+        numpy.ndarray :
+            The (x, y, z) coordinates of the atom.
+        """
+        return np.array([self.x, self.y, self.z])
             
         
                     
