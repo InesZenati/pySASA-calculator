@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from parse_pdb import load_radius_json, parse_pdb
 from write_surface_results import write_all_surface_results_in_tsv
-from find_neighboors import build_neighbor_search, get_atom_neighbors, get_max_cutoff
+from find_neighboors import build_neighbor_search, get_atom_neighbors, get_max_radius
 
 @click.command()
 @click.option("--pdb-name", 
@@ -40,10 +40,10 @@ def analyze_protein_sasa(pdb_name, pdb_file, radius_json, point_number):
     all_atoms = protein.get_all_atom()
     logger.info(f"Total number of atoms: {len(all_atoms)}")
     neighbor_lists = build_neighbor_search(all_atoms)
-    cutoff = get_max_cutoff(all_atoms)
+    max_radius = get_max_radius(all_atoms)
     
     for atom in tqdm(all_atoms, desc="Detecting occluded points"):
-        neighbor_atoms = get_atom_neighbors(atom, neighbor_lists, cutoff)
+        neighbor_atoms = get_atom_neighbors(atom, neighbor_lists, max_radius)
         atom.detect_occluded_point(neighbor_atoms)
     elapsed_time = time.time() - start_time
     logger.success(f"Occlusion detection took {elapsed_time:.2f} seconds")
