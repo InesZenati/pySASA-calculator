@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from protein_structure import Sphere
 
 # First we instanciate the sphere object 
-atom_sphere = Sphere(3.2,400)
+atom_sphere = Sphere(radius=3.2, nbpoints=400)
 atom_sphere.compute_points_coordinate()
 
 # We extract the coordianetes from the sphere points
