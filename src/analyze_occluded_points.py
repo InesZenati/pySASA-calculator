@@ -30,9 +30,9 @@ def compute_atom_surface(atom_object):
         "number_of_points": number_of_points,
         "occluded_points": number_of_occluded_atoms,
         "accessible_point": number_of_accessible,
-        "total_surface (A)": round(total_surface,2),
-        "occluded_surface (A)": round(occluded_surface,2),
-        "accessible_surface (A)": round(accessible_surface,2)
+        "total_surface (A)": total_surface,
+        "occluded_surface (A)": occluded_surface,
+        "accessible_surface (A)": accessible_surface
     }
     
     return atom_infos
