@@ -27,6 +27,10 @@ from find_neighboors import build_neighbor_search, get_atom_neighbors, get_max_r
               type=int,
               help="Number of point on the sphere")
 def analyze_protein_sasa(pdb_name, pdb_file, radius_json, point_number):
+    output_folder_name = pdb_name if pdb_name else pdb_file.stem
+    output_dir = Path("results") / output_folder_name
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
     radius_table = load_radius_json(radius_json)
     logger.info("Parsing PDB file ...")
     start_time = time.time()
@@ -48,7 +52,7 @@ def analyze_protein_sasa(pdb_name, pdb_file, radius_json, point_number):
     elapsed_time = time.time() - start_time
     logger.success(f"Occlusion detection took {elapsed_time:.2f} seconds")
 
-    write_all_surface_results_in_tsv(protein, "results")
+    write_all_surface_results_in_tsv(protein, output_dir)
     logger.success("Surface results written to results/")
     
 if __name__ == "__main__":
