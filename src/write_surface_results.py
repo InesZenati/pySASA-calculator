@@ -21,7 +21,13 @@ def write_tsv(rows, column_names, output_file_path):
         tsv_writer = csv.DictWriter(tsv_file, column_names, delimiter="\t")
         tsv_writer.writeheader()
         for row in rows:
-            tsv_writer.writerow(row)
+            f_row = {}
+            for key, value in row.items():
+                if isinstance(value, float):
+                    f_row[key] = round(value, 3)
+                else:
+                    f_row[key] = value
+            tsv_writer.writerow(f_row)
 
 
 def get_atom_surface_rows(protein):
