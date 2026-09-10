@@ -245,7 +245,9 @@ class Atom:
     detect_occluded_point(self, atomlist)
         Detects which points on the atom's sphere are occluded by a list of other atoms
         and fill the occluded_pointlist attribute with the corresponding boolean 
-        (True / False).        
+        (True / False).    
+    get_coord(self)
+        Return the coordinates of the atom    
     """
     def __init__(self, type, atomres, x, y , z, sphere):
         """
@@ -256,7 +258,7 @@ class Atom:
         type : str
             The type of the atom (e.g., 'C', 'O', 'N').
         atomres : Residues
-            The residue name associated with the atom (e.g., 'ALA', 'GLY').
+            The residue object associated with the atom.
         x : float
             X position.
         y : float
