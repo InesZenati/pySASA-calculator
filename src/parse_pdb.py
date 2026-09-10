@@ -71,7 +71,10 @@ def get_atom_radius_based_on_residue(element_radius, carbon_radius,
     else : 
         logger. warning(f"Atom {atomname} in residue {residue}" 
                         "not found in radius tables.")
-    return 0
+        raise ValueError(
+        f"No radius found for "
+        f"{residue!r} {atomname!r}"
+)
 
 
 def parse_pdb(filename, pdbname, radius_json_file, nbpoint):
