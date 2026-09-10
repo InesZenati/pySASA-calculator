@@ -345,7 +345,7 @@ class Atom:
         Iterates over every point on the atom's own sphere and checks each one against 
         all atoms in atomlist, marking it as occluded (True) if any of them covers it, 
         free (False) otherwise. The result is stored point-by-point in 
-        sphere.occluded_points, aligned by index with sphere.pointlits.
+        sphere.occluded_points, aligned by index with sphere.pointlist.
         """
         self.sphere.occluded_points = []  
         
